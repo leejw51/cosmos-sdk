@@ -35,6 +35,9 @@ func (ctx Context) Invoke(grpcCtx gocontext.Context, method string, args, reply 
 		if err != nil {
 			return err
 		}
+		if height < 0 {
+			return nil, fmt.Errorf("client.Context.Invoke: height (%d) from %q must be >= 0", height, grpctypes.GRPCBlockHeightHeader)
+		}
 
 		ctx = ctx.WithHeight(height)
 	}

@@ -2,6 +2,7 @@ package baseapp
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 
 	gogogrpc "github.com/gogo/protobuf/grpc"
@@ -33,7 +34,10 @@ func (app *BaseApp) RegisterGRPCServer(server gogogrpc.Server) {
 		if heightHeaders := md.Get(grpctypes.GRPCBlockHeightHeader); len(heightHeaders) > 0 {
 			height, err = strconv.ParseInt(heightHeaders[0], 10, 64)
 			if err != nil {
-				return nil, err
+				return nil, fmt.Errorf("Baseapp.RegisterGRPCServer: invalid height header %q: %w", grpctypes.GRPCBlockHeightHeader, err)
+			}
+			if height < 0 {
+				return nil, fmt.Errorf("Baseapp.RegisterGRPCServer: invalid height header %q: value out of range, must be >= 0", grpctypes.GRPCBlockHeightHeader)
 			}
 		}
 
